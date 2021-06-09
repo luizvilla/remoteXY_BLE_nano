@@ -12,7 +12,13 @@ class CRemoteXYStream_HardSerial : public CRemoteXYStream {
   public:
   CRemoteXYStream_HardSerial (HardwareSerial * _serial, long _serialSpeed) : CRemoteXYStream () {
     serial = _serial;
-    serial->begin (_serialSpeed);
+    
+    #if defined(REMOTEXY_MODE__BLE_NANO)
+      Serial.begin (_serialSpeed);
+    #else
+      serial->begin (_serialSpeed);
+    #endif
+
 #if defined(REMOTEXY__DEBUGLOG)
     RemoteXYDebugLog.write("Init hardware serial ");
     RemoteXYDebugLog.writeAdd(_serialSpeed);
@@ -20,6 +26,16 @@ class CRemoteXYStream_HardSerial : public CRemoteXYStream {
 #endif
   }              
   
+#if defined(REMOTEXY_MODE__BLE_NANO)
+  void handler () override {   
+    while (Serial.available ()) notifyReadByteListener (Serial.read ());
+  }
+
+  void write (uint8_t byte) override {
+    Serial.write (byte);
+  }
+
+#else  
   void handler () override {   
     while (serial->available ()) notifyReadByteListener (serial->read ());
   }
@@ -27,6 +43,7 @@ class CRemoteXYStream_HardSerial : public CRemoteXYStream {
   void write (uint8_t byte) override {
     serial->write (byte);
   }
+#endif
   
 };
 

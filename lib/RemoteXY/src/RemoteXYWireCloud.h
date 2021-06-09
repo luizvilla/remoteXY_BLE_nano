@@ -28,17 +28,19 @@ class CRemoteXYWireCloud: public CRemoteXYWire {
     id = REMOTEXYWIRECLOUD_FREE_ID;
     newConnection = 0; 
   }
-
+          
   public:
-  uint8_t init (uint8_t _id) {
+  void init (uint8_t _id) {
     id = _id;
     newConnection = 1;
-  }
-
+  }  
+  
+  /*
   public:
-  uint8_t begin () {
+  void begin () {
     newConnection = 0; 
-  }
+  }  
+  */ 
   
   public:    
   void stop () override {
